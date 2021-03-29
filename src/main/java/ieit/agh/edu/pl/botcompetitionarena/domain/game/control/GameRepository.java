@@ -1,4 +1,9 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.game.control;
 
-public class GameRepository {
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface GameRepository extends JpaRepository<GameEntity, Long> {
 }
