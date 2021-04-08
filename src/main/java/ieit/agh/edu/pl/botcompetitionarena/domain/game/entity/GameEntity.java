@@ -15,4 +15,15 @@ public class GameEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
+    private String version;
+
+    @Lob
+    private byte[] payload;
+
+    public GameEntity(String name, String version, byte[] payload) {
+        this.name = name;
+        this.version = version;
+        this.payload = payload;
+    }
 }
