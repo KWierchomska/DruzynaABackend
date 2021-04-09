@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -24,7 +26,7 @@ public class GameController {
     }
 
     @PostMapping("/upload-game")
-    public ResponseEntity<String> uploadGame(@RequestParam("name") String name,
+    public ResponseEntity<Object> uploadGame(@RequestParam("name") String name,
                                              @RequestParam("version") String version,
                                              @RequestParam("payload") MultipartFile payload) {
         String message = "";
@@ -32,8 +34,8 @@ public class GameController {
             GameEntity game = gameService.storeGame(name, version, payload);
             System.out.println("GAME " + game.getId() +" UPLOADED");
 
-            message = "Game uploaded successfully";
-            return ResponseEntity.status(HttpStatus.OK).body(message);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new GameResponse(game.getId(), game.getName(), game.getVersion()));
         } catch (Exception e) {
             message = "Failed to upload game";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
@@ -45,11 +47,21 @@ public class GameController {
         try {
             GameEntity game = gameService.getGame(id);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + game.getName() + ".zip\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + game.getName() + ".zip\"")
                     .body(game.getPayload());
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Error fetching game");
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                    .body("Game with id " + id + " doesn't exist");
         }
     }
 
+    @GetMapping("/games")
+    public ResponseEntity<List<GameResponse>> getGames() {
+        List<GameResponse> games = gameService.getAllGames()
+                .map(g -> new GameResponse(g.getId(), g.getName(), g.getVersion())
+        ).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(games);
+    }
 }

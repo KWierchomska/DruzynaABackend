@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class GameService {
@@ -23,12 +21,6 @@ public class GameService {
     public GameEntity storeGame(String name, String version, MultipartFile payload) throws IOException {
         GameEntity game = new GameEntity(name, version, payload.getBytes());
 
-        File file = new File("/home/zbsss/Desktop/gup1.zip");
-
-        try (OutputStream os = new FileOutputStream(file)) {
-            os.write(payload.getBytes());
-        }
-
         gameRepository.save(game);
         return game;
     }
@@ -37,5 +29,9 @@ public class GameService {
         Optional<GameEntity> game = gameRepository.findById(id);
         if (game.isPresent()) return game.get();
         throw new IllegalStateException("Game with id " + id + " does not exist");
+    }
+
+    public Stream<GameEntity> getAllGames() {
+        return gameRepository.findAll().stream();
     }
 }
