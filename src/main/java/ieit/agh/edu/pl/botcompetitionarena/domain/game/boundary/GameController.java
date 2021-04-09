@@ -7,7 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -29,20 +32,18 @@ public class GameController {
     public ResponseEntity<Object> uploadGame(@RequestParam("name") String name,
                                              @RequestParam("version") String version,
                                              @RequestParam("payload") MultipartFile payload) {
-        String message = "";
         try {
             GameEntity game = gameService.storeGame(name, version, payload);
-            System.out.println("GAME " + game.getId() +" UPLOADED");
+            System.out.println("GAME " + game.getId() + " UPLOADED");
 
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new GameResponse(game.getId(), game.getName(), game.getVersion()));
         } catch (Exception e) {
-            message = "Failed to upload game";
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Failed to upload game");
         }
     }
 
-    @GetMapping(path="/game/{id}", produces="application/hal+json;charset=utf8")
+    @GetMapping(path = "/game/{id}", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Object> getGame(@PathVariable Long id) {
         try {
             GameEntity game = gameService.getGame(id);
@@ -60,7 +61,7 @@ public class GameController {
     public ResponseEntity<List<GameResponse>> getGames() {
         List<GameResponse> games = gameService.getAllGames()
                 .map(g -> new GameResponse(g.getId(), g.getName(), g.getVersion())
-        ).collect(Collectors.toList());
+                ).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(games);
     }
