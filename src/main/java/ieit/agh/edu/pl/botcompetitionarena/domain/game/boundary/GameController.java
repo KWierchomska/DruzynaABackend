@@ -2,6 +2,7 @@ package ieit.agh.edu.pl.botcompetitionarena.domain.game.boundary;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.control.GameService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -37,7 +37,7 @@ public class GameController {
             System.out.println("GAME " + game.getId() + " UPLOADED");
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new GameResponse(game.getId(), game.getName(), game.getVersion()));
+                    .body(new GameSummary(game.getId(), game.getName(), game.getVersion()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Failed to upload game");
         }
@@ -58,11 +58,7 @@ public class GameController {
     }
 
     @GetMapping("/games")
-    public ResponseEntity<List<GameResponse>> getGames() {
-        List<GameResponse> games = gameService.getAllGames()
-                .map(g -> new GameResponse(g.getId(), g.getName(), g.getVersion())
-                ).collect(Collectors.toList());
-
-        return ResponseEntity.status(HttpStatus.OK).body(games);
+    public ResponseEntity<List<GameSummary>> getGames() {
+        return ResponseEntity.status(HttpStatus.OK).body(gameService.getAllWithoutPayload());
     }
 }

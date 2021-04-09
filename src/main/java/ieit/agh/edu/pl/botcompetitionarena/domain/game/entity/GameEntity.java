@@ -19,6 +19,7 @@ public class GameEntity {
     private String version;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] payload;
 
     public GameEntity(String name, String version, byte[] payload) {
