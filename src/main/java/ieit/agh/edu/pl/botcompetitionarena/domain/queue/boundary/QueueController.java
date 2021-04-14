@@ -1,0 +1,41 @@
+package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
+
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+
+@Controller
+public class QueueController {
+    private final QueueService queueService;
+
+    @Autowired
+    public QueueController(QueueService queueService) {
+        this.queueService = queueService;
+    }
+
+    @PostMapping("/start-game")
+    public ResponseEntity<Object> uploadGame(@RequestParam("gameId") Long gameId,
+                                             @RequestParam("name") String name,
+                                             @RequestParam("config") MultipartFile config,
+                                             @RequestParam("deadline")
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                     LocalDateTime deadline) {
+        try {
+            QueueEntity queue = queueService.addQueue(name, gameId, deadline, config);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(queue);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Failed to start game");
+        }
+    }
+}
