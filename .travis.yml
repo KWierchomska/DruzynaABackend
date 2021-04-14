@@ -5,3 +5,4 @@ branches:
     - /^main*$/
     - /^develop*$/
     - /^feature*$/
+    - /^bugfix*$/
