@@ -2,6 +2,6 @@ language: java
 
 branches:
   only:
-    - /^main.*$/
-    - /^develop.*$/
-    - /^feature.*$/
+    - /^main*$/
+    - /^develop*$/
+    - /^feature*$/
