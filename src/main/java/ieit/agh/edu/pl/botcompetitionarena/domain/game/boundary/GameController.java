@@ -31,9 +31,10 @@ public class GameController {
     @PostMapping("/upload-game")
     public ResponseEntity<Object> uploadGame(@RequestParam("name") String name,
                                              @RequestParam("version") String version,
+                                             @RequestParam("description") String description,
                                              @RequestParam("payload") MultipartFile payload) {
         try {
-            GameEntity game = gameService.storeGame(name, version, payload);
+            GameEntity game = gameService.storeGame(name, version, description, payload);
             System.out.println("GAME " + game.getId() + " UPLOADED");
 
             return ResponseEntity.status(HttpStatus.OK)

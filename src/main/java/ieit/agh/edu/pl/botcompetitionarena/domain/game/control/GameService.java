@@ -19,8 +19,8 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
-    public GameEntity storeGame(String name, String version, MultipartFile payload) throws IOException {
-        GameEntity game = new GameEntity(name, version, payload.getBytes());
+    public GameEntity storeGame(String name, String version, String description, MultipartFile payload) throws IOException {
+        GameEntity game = new GameEntity(name, version, description, payload.getBytes());
 
         gameRepository.save(game);
         return game;
