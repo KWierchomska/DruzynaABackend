@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class QueueService {
@@ -32,7 +31,7 @@ public class QueueService {
         return queue;
     }
 
-    public QueueEntity getQueue(Long id){
+    public QueueEntity getQueue(Long id) {
         return queueRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Queue with id " + id + " does not exist"));
