@@ -5,9 +5,6 @@ import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 @Entity

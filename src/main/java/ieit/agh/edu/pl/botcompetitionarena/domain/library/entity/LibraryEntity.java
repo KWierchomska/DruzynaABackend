@@ -27,7 +27,7 @@ public class LibraryEntity {
     @JoinTable(name = "library_queue_assignment",
             joinColumns = {@JoinColumn(name = "library_id")},
             inverseJoinColumns = {@JoinColumn(name = "queue_id")})
-    Set<QueueEntity> queues = new HashSet<>();
+    private Set<QueueEntity> queues = new HashSet<>();
 
     @OneToMany(mappedBy = "library")
     private Set<VoteEntity> votes;
