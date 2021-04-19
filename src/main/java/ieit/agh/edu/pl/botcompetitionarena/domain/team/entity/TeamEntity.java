@@ -21,17 +21,17 @@ public class TeamEntity {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy="team")
+    @OneToMany(mappedBy = "team")
     private Set<TeamMemberEntity> teamMembers;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "team_leader_id", referencedColumnName = "id")
     private TeamMemberEntity teamLeader;
 
-    @OneToMany(mappedBy="team")
+    @OneToMany(mappedBy = "team")
     private Set<VoteEntity> votes;
 
-    @OneToMany(mappedBy="team")
+    @OneToMany(mappedBy = "team")
     private Set<BotEntity> bots;
 
     public TeamEntity(String name) {

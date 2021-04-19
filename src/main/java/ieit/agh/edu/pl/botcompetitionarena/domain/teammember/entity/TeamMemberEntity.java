@@ -22,7 +22,7 @@ public class TeamMemberEntity {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name="team_id")
+    @JoinColumn(name = "team_id")
     private TeamEntity team;
 
     public TeamMemberEntity(String name, String surname, String email, String password) {

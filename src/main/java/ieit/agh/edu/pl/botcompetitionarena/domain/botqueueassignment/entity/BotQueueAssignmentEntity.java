@@ -25,11 +25,11 @@ public class BotQueueAssignmentEntity {
     private byte[] log;
 
     @ManyToOne
-    @JoinColumn(name="botId")
+    @JoinColumn(name = "botId")
     private BotEntity bot;
 
     @ManyToOne
-    @JoinColumn(name="queue")
+    @JoinColumn(name = "queue")
     private QueueEntity queue;
 
     public BotQueueAssignmentEntity(Integer place) {
