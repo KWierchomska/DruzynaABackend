@@ -20,11 +20,11 @@ public class VoteEntity {
     private boolean vote;
 
     @ManyToOne
-    @JoinColumn(name="team_id")
+    @JoinColumn(name = "team_id")
     private TeamEntity team;
 
     @ManyToOne
-    @JoinColumn(name="library_id")
+    @JoinColumn(name = "library_id")
     private LibraryEntity library;
 
     public VoteEntity(boolean vote) {

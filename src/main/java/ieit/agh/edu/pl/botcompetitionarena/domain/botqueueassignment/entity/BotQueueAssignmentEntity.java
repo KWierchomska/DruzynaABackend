@@ -5,7 +5,6 @@ import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "bot_queue_assignment")
@@ -25,11 +24,11 @@ public class BotQueueAssignmentEntity {
     private byte[] log;
 
     @ManyToOne
-    @JoinColumn(name="botId")
+    @JoinColumn(name = "botId")
     private BotEntity bot;
 
     @ManyToOne
-    @JoinColumn(name="queue")
+    @JoinColumn(name = "queue")
     private QueueEntity queue;
 
     public BotQueueAssignmentEntity(Integer place) {

@@ -37,10 +37,10 @@ public class QueueEntity {
     @JoinColumn(name = "game_id")
     private GameEntity game;
 
-    @ManyToMany(mappedBy="queues")
+    @ManyToMany(mappedBy = "queues")
     private Set<LibraryEntity> libraries = new HashSet<>();
 
-    @OneToMany(mappedBy="queue")
+    @OneToMany(mappedBy = "queue")
     private Set<BotQueueAssignmentEntity> bots;
 
     public QueueEntity(String name, LocalDateTime deadline, byte[] config, GameEntity game) {

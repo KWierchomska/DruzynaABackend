@@ -24,12 +24,12 @@ public class LibraryEntity {
     private StateOfDefinition stateOfDefinition;
 
     @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(name="library_queue_assignment",
-    joinColumns = {@JoinColumn(name="library_id")},
-    inverseJoinColumns = { @JoinColumn(name="queue_id")})
-    Set<QueueEntity> queues = new HashSet<>();
+    @JoinTable(name = "library_queue_assignment",
+            joinColumns = {@JoinColumn(name = "library_id")},
+            inverseJoinColumns = {@JoinColumn(name = "queue_id")})
+    private Set<QueueEntity> queues = new HashSet<>();
 
-    @OneToMany(mappedBy="library")
+    @OneToMany(mappedBy = "library")
     private Set<VoteEntity> votes;
 
     public LibraryEntity(String name, String version, StateOfDefinition stateOfDefinition) {
