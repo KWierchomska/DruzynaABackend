@@ -1,12 +1,16 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,5 +41,14 @@ public class QueueController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Failed to start game");
         }
+    }
+
+    @GetMapping(path = "/queue-log/{id}", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Object> getQueueLog(@PathVariable Long id) {
+        QueueEntity queue = queueService.getQueue(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + queue.getName() + " Log " + ".zip\"")
+                .body(queue.getLog());
     }
 }
