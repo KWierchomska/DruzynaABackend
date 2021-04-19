@@ -33,14 +33,14 @@ public class QueueEntity {
     @Basic(fetch = FetchType.LAZY)
     private byte[] log;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private GameEntity game;
 
-    @ManyToMany(mappedBy = "queues")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "queues")
     private Set<LibraryEntity> libraries = new HashSet<>();
 
-    @OneToMany(mappedBy = "queue")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "queue")
     private Set<BotQueueAssignmentEntity> bots;
 
     public QueueEntity(String name, LocalDateTime deadline, byte[] config, GameEntity game) {

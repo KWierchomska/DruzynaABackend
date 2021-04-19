@@ -1,6 +1,5 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
-import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
