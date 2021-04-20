@@ -59,13 +59,14 @@ public class GameController {
     }
 
     @GetMapping("/games")
-    public ResponseEntity<List<GameSummary>> getGames() {
-        return ResponseEntity.status(HttpStatus.OK).body(gameService.getAllWithoutPayload());
+    @Transactional
+    public ResponseEntity<List<GameEntity>> getGames() {
+        return ResponseEntity.status(HttpStatus.OK).body(gameService.getGamesWithQueues());
     }
 
-    @GetMapping(path = "/games/{id}")
-    @Transactional
-    public ResponseEntity<GameEntity> getGame(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(gameService.getGameWithQueues(id));
-    }
+//    @GetMapping(path = "/games/{id}")
+//    @Transactional
+//    public ResponseEntity<GameEntity> getGame(@PathVariable Long id) {
+//        return ResponseEntity.status(HttpStatus.OK).body(gameService.getGameWithQueues(id));
+//    }
 }
