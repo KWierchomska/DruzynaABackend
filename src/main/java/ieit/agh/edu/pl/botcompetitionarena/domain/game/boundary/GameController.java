@@ -8,14 +8,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 @Controller
@@ -31,9 +31,10 @@ public class GameController {
     @PostMapping("/upload-game")
     public ResponseEntity<Object> uploadGame(@RequestParam("name") String name,
                                              @RequestParam("version") String version,
+                                             @RequestParam("description") String description,
                                              @RequestParam("payload") MultipartFile payload) {
         try {
-            GameEntity game = gameService.storeGame(name, version, payload);
+            GameEntity game = gameService.storeGame(name, version, description, payload);
             System.out.println("GAME " + game.getId() + " UPLOADED");
 
             return ResponseEntity.status(HttpStatus.OK)
@@ -44,7 +45,7 @@ public class GameController {
     }
 
     @GetMapping(path = "/game/{id}", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Object> getGame(@PathVariable Long id) {
+    public ResponseEntity<Object> downloadGame(@PathVariable Long id) {
         try {
             GameEntity game = gameService.getGame(id);
             return ResponseEntity.ok()
@@ -60,5 +61,11 @@ public class GameController {
     @GetMapping("/games")
     public ResponseEntity<List<GameSummary>> getGames() {
         return ResponseEntity.status(HttpStatus.OK).body(gameService.getAllWithoutPayload());
+    }
+
+    @GetMapping(path = "/games/{id}")
+    @Transactional
+    public ResponseEntity<GameEntity> getGame(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(gameService.getGameWithQueues(id));
     }
 }
