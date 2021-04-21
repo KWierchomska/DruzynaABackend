@@ -6,10 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.team.entity.TeamEntity;
-import ieit.agh.edu.pl.botcompetitionarena.domain.botqueueassignment.entity.BotQueueAssignmentEntity;
 
 @Entity
 @Table(name = "bot")
@@ -42,9 +40,6 @@ public class BotEntity {
     @ManyToOne
     @JoinColumn(name = "team_id")
     private TeamEntity team;
-
-    @OneToMany(mappedBy = "bot")
-    private Set<BotQueueAssignmentEntity> queues;
 
     public BotEntity(String name, String version, byte[] payload) {
         this.name = name;

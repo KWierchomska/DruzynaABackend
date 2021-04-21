@@ -10,16 +10,17 @@ public class ConfigFileCreator {
 
     public static void create(List<String> botProjectNames) {
         try {
-            File file = new File("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config5.py");
+            File file = new File("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config6.py");
             if (file.createNewFile()) {
                 System.out.println("File: " + file.getName() + " created");
             } else {
                 System.out.println("File " + file.getName() + " already exist. Please remove it first.");
                 return;
             }
-            FileWriter fileWriter = new FileWriter("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config5.py");
+            FileWriter fileWriter = new FileWriter("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config6.py");
             fileWriter.write(
-                    botProjectNames.stream().map(projectName -> "from gupb.controller import " + projectName).collect(Collectors.joining("\n")) +
+                    botProjectNames.stream().map(projectName -> "from gupb.controller import " + projectName)
+                            .collect(Collectors.joining("\n")) +
                     "\n\n" +
                     "CONFIGURATION = {\n" +
                     "    'arenas': [\n" +

@@ -62,7 +62,6 @@ public class BotController {
         List<BotEntity> bots = botService.getBotsByQueueId(Long.parseLong(queueId));
         List<String> botPackageNames = bots.stream().map(BotEntity::getName).collect(Collectors.toList());
         ConfigFileCreator.create(botPackageNames);
-        System.out.println("TESTS");
     }
 
 }

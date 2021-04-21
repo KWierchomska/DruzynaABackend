@@ -11,7 +11,9 @@ import java.util.List;
 @Repository
 public interface BotRepository extends JpaRepository<BotEntity, Long> {
 
-    @Query("select q.bots from QueueEntity q " +
+    @Query("select b from QueueEntity q " +
+            "join BotQueueAssignmentEntity bqa on bqa.queue.id = q.id " +
+            "join BotEntity b on b.id = bqa.bot.id " +
             "where :queue_id = q.id")
     List<BotEntity> getBotEntitiesById(@Param("queue_id") Long queueId);
 
