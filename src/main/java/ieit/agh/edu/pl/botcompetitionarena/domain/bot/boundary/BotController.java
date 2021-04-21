@@ -1,6 +1,7 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.boundary;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.BotService;
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.ConfigFileCreator;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotSummary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Controller
 public class BotController {
@@ -53,4 +56,13 @@ public class BotController {
                     .body("Bot with id " + id + " doesn't exist");
         }
     }
+
+    @GetMapping("/run-queue/{queue-id}")
+    public void runQueue(@PathVariable("queue-id") String queueId) {
+        List<BotEntity> bots = botService.getBotsByQueueId(Long.parseLong(queueId));
+        List<String> botPackageNames = bots.stream().map(BotEntity::getName).collect(Collectors.toList());
+        ConfigFileCreator.create(botPackageNames);
+        System.out.println("TESTS");
+    }
+
 }
