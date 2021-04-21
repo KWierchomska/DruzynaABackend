@@ -58,6 +58,17 @@ public class GameController {
         }
     }
 
+    @GetMapping(path = "/game/{id}/summary")
+    public ResponseEntity<Object> getGameSummary(@PathVariable Long id) {
+        try {
+            GameEntity game = gameService.getGame(id);
+            return ResponseEntity.ok().body(new GameSummary(game.getId(), game.getName(), game.getVersion()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                    .body("Game with id " + id + " doesn't exist");
+        }
+    }
+
     @GetMapping("/games")
     public ResponseEntity<List<GameSummary>> getGames() {
         return ResponseEntity.status(HttpStatus.OK).body(gameService.getAllWithoutPayload());
