@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 
 public class ConfigFileCreator {
 
-    public static void create(List<String> botProjectNames) {
+    public static void create(String configPath, List<String> botProjectNames) {
+        // "src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"
         try
         {
-            Files.deleteIfExists(Paths.get("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"));
+            Files.deleteIfExists(Paths.get(configPath));
         }
         catch(NoSuchFileException e)
         {
@@ -26,14 +27,14 @@ public class ConfigFileCreator {
         }
         System.out.println("Previous config file deletion successful");
         try {
-            File file = new File("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py");
+            File file = new File(configPath);
             if (file.createNewFile()) {
                 System.out.println("File: " + file.getName() + " created");
             } else {
                 System.out.println("File " + file.getName() + " already exist. Please remove it first.");
                 return;
             }
-            FileWriter fileWriter = new FileWriter("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py");
+            FileWriter fileWriter = new FileWriter(configPath);
             fileWriter.write(
                     botProjectNames.stream().map(projectName -> "from gupb.controller import " + projectName)
                             .collect(Collectors.joining("\n")) +
