@@ -17,7 +17,7 @@ public class GubpProjectRunner {
     public static void run(QueueEntity queue, GameEntity game) throws IOException {
         // TODO: install requirements.txt automatically, create env
         String envPath = "/home/zbsss/anaconda3/envs/gupb/bin/python"; // TODO
-        ProcessBuilder pb = new ProcessBuilder(envPath, "-m", "gupb");
+        ProcessBuilder pb = new ProcessBuilder("/usr/bin/python3", "-m", "gupb");
 
         String controllerRelativePath = "GUPB-master/gupb/controller"; //TODO
         String configRelativePath = "GUPB-master/gupb/default_config.py"; //TODO
