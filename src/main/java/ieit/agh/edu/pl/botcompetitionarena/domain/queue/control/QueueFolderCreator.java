@@ -7,6 +7,7 @@ import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import net.lingala.zip4j.ZipFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,8 +37,7 @@ public class QueueFolderCreator {
         this.configRelativePath = configRelativePath;
     }
 
-    public String createFor(QueueEntity queue) throws IOException {
-        GameEntity game = queue.getGame();
+    public String createFor(QueueEntity queue, GameEntity game) throws IOException {
 
         // main directory for this queue
         System.out.println("CREATING FOLDERS");

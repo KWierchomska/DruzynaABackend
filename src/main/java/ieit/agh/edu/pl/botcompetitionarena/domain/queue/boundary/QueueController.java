@@ -1,6 +1,7 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -53,9 +55,11 @@ public class QueueController {
                 .body(queue.getLog());
     }
 
+    @Transactional
     @GetMapping("/run-queue/{queue-id}")
     public void runQueue(@PathVariable("queue-id") Long queueId) throws IOException {
         QueueEntity queue = queueService.getQueue(queueId);
-        GubpProjectRunner.run(queue);
+        GameEntity game = queue.getGame();
+        GubpProjectRunner.run(queue, game);
     }
 }
