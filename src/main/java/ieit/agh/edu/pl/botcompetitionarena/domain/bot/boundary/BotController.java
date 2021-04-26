@@ -1,11 +1,8 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.boundary;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.BotService;
-import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.ConfigFileCreator;
-import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotSummary;
-import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Controller
 public class BotController {
@@ -64,7 +58,7 @@ public class BotController {
 
     @Transactional
     @PostMapping("/set-content/{id}")
-    public ResponseEntity<Object> uploadBot(@PathVariable("id") Long botId,
+    public ResponseEntity<Object> setBot(@PathVariable("id") Long botId,
                                             @RequestParam("payload") MultipartFile payload) {
         try {
             BotEntity bot = botService.getBot(botId);

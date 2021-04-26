@@ -13,12 +13,9 @@ public class ConfigFileCreator {
 
     public static void create(String configPath, List<String> botProjectNames) {
         // "src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"
-        try
-        {
+        try {
             Files.deleteIfExists(Paths.get(configPath));
-        }
-        catch(NoSuchFileException e)
-        {
+        } catch (NoSuchFileException e) {
             System.out.println("No such file/directory exists when searching for default_config.py file");
         } catch (IOException e) {
             System.out.println("Invalid permissions to delete old and create new default_config.py file");
@@ -36,25 +33,25 @@ public class ConfigFileCreator {
             fileWriter.write(
                     botProjectNames.stream().map(projectName -> "from gupb.controller import " + projectName)
                             .collect(Collectors.joining("\n")) +
-                    "\n\n" +
-                    "CONFIGURATION = {\n" +
-                    "    'arenas': [\n" +
-                    "        'archipelago',\n" +
-                    "        'wasteland',\n" +
-                    "        'dungeon',\n" +
-                    "        'fisher_island',\n" +
-                    "    ],\n" +
-                    "    'controllers': [\n" +
-                    "        " +
-                            String.join(".BotController(\"nazwa_bota\"),\n        ", botProjectNames)
+                            "\n\n" +
+                            "CONFIGURATION = {\n" +
+                            "    'arenas': [\n" +
+                            "        'archipelago',\n" +
+                            "        'wasteland',\n" +
+                            "        'dungeon',\n" +
+                            "        'fisher_island',\n" +
+                            "    ],\n" +
+                            "    'controllers': [\n" +
+                            "        "
+                            + String.join(".BotController(\"nazwa_bota\"),\n        ", botProjectNames)
                             + ".BotController(\"nazwa_bota\"),\n" +
-                    "    ],\n" +
-                    "    'start_balancing': False,\n" +
-                    "    'visualise': False,\n" +
-                    "    'show_sight': None,\n" +
-                    "    'runs_no': 2,\n" +
-                    "    'profiling_metrics': [],  # possible metrics ['all', 'total', 'avg']\n" +
-                    "}\n");
+                            "    ],\n" +
+                            "    'start_balancing': False,\n" +
+                            "    'visualise': False,\n" +
+                            "    'show_sight': None,\n" +
+                            "    'runs_no': 2,\n" +
+                            "    'profiling_metrics': [],  # possible metrics ['all', 'total', 'avg']\n" +
+                            "}\n");
             fileWriter.close();
         } catch (IOException e) {
             System.out.println("An error when creating config file occurred");
