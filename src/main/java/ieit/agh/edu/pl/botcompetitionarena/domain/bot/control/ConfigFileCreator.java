@@ -12,16 +12,11 @@ import java.util.stream.Collectors;
 public class ConfigFileCreator {
 
     public static void create(List<String> botProjectNames) {
-        try
-        {
+        try {
             Files.deleteIfExists(Paths.get("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"));
-        }
-        catch(NoSuchFileException e)
-        {
+        } catch (NoSuchFileException e) {
             System.out.println("No such file/directory exists when searching for default_config.py file");
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             System.out.println("Invalid permissions to delete old and create new default_config.py file");
         }
         System.out.println("Previous config file deletion successful");
@@ -46,7 +41,9 @@ public class ConfigFileCreator {
                     "        'fisher_island',\n" +
                     "    ],\n" +
                     "    'controllers': [\n" +
-                    "        " + String.join(".BotController(\"nazwa_bota\"),\n        ", botProjectNames) + ".BotController(\"nazwa_bota\"),\n" +
+                    "        " +
+                            String.join(".BotController(\"nazwa_bota\"),\n        ", botProjectNames)
+                            + ".BotController(\"nazwa_bota\"),\n" +
                     "    ],\n" +
                     "    'start_balancing': False,\n" +
                     "    'visualise': False,\n" +
