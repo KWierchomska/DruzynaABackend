@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -57,6 +58,22 @@ public class BotController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
                     .body("Bot with id " + id + " doesn't exist");
+        }
+    }
+
+    @Transactional
+    @PostMapping("/set-content/{id}")
+    public ResponseEntity<Object> uploadBot(@PathVariable("id") Long botId,
+                                            @RequestParam("payload") MultipartFile payload) {
+        try {
+            BotEntity bot = botService.getBot(botId);
+            bot.setPayload(payload.getBytes());
+            System.out.println("BOT " + bot.getId() + " UPLOADED");
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new BotSummary(bot.getId(), bot.getName(), bot.getVersion()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Failed to upload bot");
         }
     }
 }

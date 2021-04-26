@@ -1,5 +1,6 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.control;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueFolderCreator;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 
@@ -13,16 +14,21 @@ import java.nio.file.Paths;
 
 public class GubpProjectRunner {
 
-    public static void run(QueueEntity queue) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("python", "-m", "gupb");
+    public static void run(QueueEntity queue, GameEntity game) throws IOException {
+        // TODO: install requirements.txt automatically, create env
+        String envPath = "/home/zbsss/anaconda3/envs/gupb/bin/python"; // TODO
+        ProcessBuilder pb = new ProcessBuilder(envPath, "-m", "gupb");
 
-        String controllerRelativePath = "GUPB\\gupb\\controller"; //TODO
-        String configRelativePath = "GUPB\\gupb\\default_config.py"; //TODO
-        String gameRelativePath = "GUPB\\gupb"; //TODO
+        String controllerRelativePath = "GUPB-master/gupb/controller"; //TODO
+        String configRelativePath = "GUPB-master/gupb/default_config.py"; //TODO
+        String gameRelativePath = "GUPB-master/"; //TODO
 
         QueueFolderCreator creator = new QueueFolderCreator(controllerRelativePath, configRelativePath);
-        String queuePath = creator.createFor(queue);
-        File workingFolder = Paths.get(queuePath, gameRelativePath).toFile();
+        String queuePath = creator.createFor(queue, game);
+
+        Path folder = Paths.get(queuePath, gameRelativePath);
+        System.out.println(folder);
+        File workingFolder = new File(folder.toString());
 
         pb.directory(workingFolder);
         Process proc = pb.start();
