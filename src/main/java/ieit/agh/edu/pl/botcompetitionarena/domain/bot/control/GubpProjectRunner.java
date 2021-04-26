@@ -1,16 +1,29 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.control;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueFolderCreator;
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class GubpProjectRunner {
 
-    public static void run() throws IOException {
+    public static void run(QueueEntity queue) throws IOException {
         ProcessBuilder pb = new ProcessBuilder("python", "-m", "gupb");
-        File workingFolder = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\gupbapp\\GUPB");
+
+        String controllerRelativePath = "GUPB\\gupb\\controller"; //TODO
+        String configRelativePath = "GUPB\\gupb\\default_config.py"; //TODO
+        String gameRelativePath = "GUPB\\gupb"; //TODO
+
+        QueueFolderCreator creator = new QueueFolderCreator(controllerRelativePath, configRelativePath);
+        String queuePath = creator.createFor(queue);
+        File workingFolder = Paths.get(queuePath, gameRelativePath).toFile();
+
         pb.directory(workingFolder);
         Process proc = pb.start();
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));

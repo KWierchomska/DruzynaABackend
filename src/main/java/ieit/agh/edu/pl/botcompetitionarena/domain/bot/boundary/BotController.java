@@ -5,6 +5,7 @@ import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.ConfigFileCreator;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotSummary;
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,13 +60,4 @@ public class BotController {
                     .body("Bot with id " + id + " doesn't exist");
         }
     }
-
-    @GetMapping("/run-queue/{queue-id}")
-    public void runQueue(@PathVariable("queue-id") String queueId) throws IOException, InterruptedException {
-        List<BotEntity> bots = botService.getBotsByQueueId(Long.parseLong(queueId));
-        List<String> botPackageNames = bots.stream().map(BotEntity::getName).collect(Collectors.toList());
-        ConfigFileCreator.create(botPackageNames);
-        GubpProjectRunner.run();
-    }
-
 }

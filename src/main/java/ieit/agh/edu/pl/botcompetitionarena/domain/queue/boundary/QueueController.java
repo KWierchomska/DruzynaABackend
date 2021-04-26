@@ -1,5 +1,6 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Controller
@@ -49,5 +51,11 @@ public class QueueController {
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + queue.getName() + " Log " + ".zip\"")
                 .body(queue.getLog());
+    }
+
+    @GetMapping("/run-queue/{queue-id}")
+    public void runQueue(@PathVariable("queue-id") Long queueId) throws IOException {
+        QueueEntity queue = queueService.getQueue(queueId);
+        GubpProjectRunner.run(queue);
     }
 }

@@ -1,5 +1,6 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.control;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.ConfigFileCreator;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.botqueueassignment.entity.BotQueueAssignmentEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
@@ -16,34 +17,32 @@ import java.util.stream.Collectors;
 public class QueueFolderCreator {
     private final String basePath;
     private final String controllersRelativePath;
+    private final String configRelativePath;
 
 
     /**
      * @param allGamesFolder by default /home/<user>/games,
      *                       folder where all running queues are stored
      */
-    public QueueFolderCreator(String allGamesFolder, String controllersRelativePath) {
+    public QueueFolderCreator(String allGamesFolder, String controllersRelativePath, String configRelativePath) {
         this.basePath = allGamesFolder;
         this.controllersRelativePath = controllersRelativePath;
+        this.configRelativePath = configRelativePath;
     }
 
-    public QueueFolderCreator(String controllersRelativePath) {
+    public QueueFolderCreator(String controllersRelativePath, String configRelativePath) {
         this.basePath = Paths.get(System.getProperty("user.home"), "games").toString();
         this.controllersRelativePath = controllersRelativePath;
+        this.configRelativePath = configRelativePath;
     }
 
-    public void createFor(QueueEntity queue) throws IOException {
+    public String createFor(QueueEntity queue) throws IOException {
         GameEntity game = queue.getGame();
 
         // main directory for this queue
         System.out.println("CREATING FOLDERS");
         Path queueFolder = Paths.get(basePath, fileName(queue.getName()));
         Files.createDirectories(queueFolder);
-
-        // write config to config.py
-        Path configPath = Paths.get(queueFolder.toString(), "config.py");
-        System.out.println("WRITING CONFIG TO: " + configPath);
-        Files.write(configPath, queue.getConfig());
 
         // write game zip to folder, unzip, remove zip
         System.out.println("WRITING GAME TO:" + queueFolder);
@@ -62,6 +61,16 @@ public class QueueFolderCreator {
             System.out.println("WRITING BOT TO: " + botPath);
             unzipAndCleanUp(botPath, controllersPath, bot.getPayload());
         }
+
+        // write config
+        Path configPath = Paths.get(queueFolder.toString(), configRelativePath);
+        System.out.println("WRITING CONFIG TO: " + configPath);
+        ConfigFileCreator.create(
+                configPath.toString(),
+                bots.stream().map(BotEntity::getName).collect(Collectors.toList())
+        );
+
+        return queueFolder.toString();
     }
 
     private void unzipAndCleanUp(Path zipPath, Path destination, byte[] content) throws IOException {
