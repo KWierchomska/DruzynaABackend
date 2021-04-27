@@ -19,7 +19,7 @@ public class GubpProjectRunner {
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
         // TODO: install requirements.txt automatically, create env
         String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python"; // TODO
-        ProcessBuilder pb = new ProcessBuilder(envPath, "-m", "gupb");
+        ProcessBuilder pb = new ProcessBuilder("python", "-m", "gupb");
 
         String controllerRelativePath = "GUPB-master/gupb/controller"; //TODO
         String configRelativePath = "GUPB-master/gupb/default_config.py"; //TODO
