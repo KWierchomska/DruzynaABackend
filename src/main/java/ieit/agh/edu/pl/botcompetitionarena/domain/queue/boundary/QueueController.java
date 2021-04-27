@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class QueueController {
@@ -57,9 +58,10 @@ public class QueueController {
 
     @Transactional
     @GetMapping("/run-queue/{queue-id}")
-    public void runQueue(@PathVariable("queue-id") Long queueId) throws IOException {
+    public ResponseEntity<List<String>> runQueue(@PathVariable("queue-id") Long queueId) throws IOException {
         QueueEntity queue = queueService.getQueue(queueId);
         GameEntity game = queue.getGame();
-        GubpProjectRunner.run(queue, game);
+        return ResponseEntity.ok()
+                .body(GubpProjectRunner.run(queue, game));
     }
 }
