@@ -46,7 +46,7 @@ public class GubpProjectRunner {
             System.out.println(s);
             results.add(s);
         }
-        System.out.println(proc.info());
+        System.out.println(proc.info().toString());
         return results;
     }
 
