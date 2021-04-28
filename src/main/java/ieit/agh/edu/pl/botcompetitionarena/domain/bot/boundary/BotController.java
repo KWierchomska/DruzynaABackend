@@ -33,9 +33,10 @@ public class BotController {
     @PostMapping("/upload-bot")
     public ResponseEntity<Object> uploadBot(@RequestParam("name") String name,
                                              @RequestParam("version") String version,
+                                             @RequestParam("queue") Long queueId,
                                              @RequestParam("payload") MultipartFile payload) {
         try {
-            BotEntity bot = botService.storeBot(name, version, payload);
+            BotEntity bot = botService.storeBot(name, version, queueId, payload);
             System.out.println("BOT " + bot.getId() + " UPLOADED");
 
             return ResponseEntity.status(HttpStatus.OK)
