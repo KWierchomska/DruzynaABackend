@@ -1,5 +1,7 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.control;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class ConfigFileCreator {
 
-    public static void create(String configPath, List<String> botProjectNames) {
+    public static void create(String configPath, List<BotEntity> bots) {
         // "src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"
         try {
             Files.deleteIfExists(Paths.get(configPath));
@@ -31,7 +33,7 @@ public class ConfigFileCreator {
             }
             FileWriter fileWriter = new FileWriter(configPath);
             fileWriter.write(
-                    botProjectNames.stream().map(projectName -> "from gupb.controller import " + projectName)
+                    bots.stream().map(bot -> "from gupb.controller import " + bot.getName())
                             .collect(Collectors.joining("\n")) +
                             "\n\n" +
                             "CONFIGURATION = {\n" +
@@ -42,9 +44,7 @@ public class ConfigFileCreator {
                             "        'fisher_island',\n" +
                             "    ],\n" +
                             "    'controllers': [\n" +
-                            "        "
-                            + String.join(".BotController(\"nazwa_bota\"),\n        ", botProjectNames)
-                            + ".BotController(\"nazwa_bota\"),\n" +
+                            bots.stream().map(ConfigFileCreator::botName).collect(Collectors.joining("")) +
                             "    ],\n" +
                             "    'start_balancing': False,\n" +
                             "    'visualise': False,\n" +
@@ -59,4 +59,7 @@ public class ConfigFileCreator {
         }
     }
 
+    private static String botName(BotEntity bot) {
+        return "        " + bot.getName() + ".BotController(\"" + bot.getId() + "\"),\n";
+    }
 }
