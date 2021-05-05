@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,9 @@ public class BotQueueAssignmentService {
         this.botQueueAssignmentRepository = botQueueAssignmentRepository;
     }
 
+    public List<BotQueueAssignmentEntity> getBotsPlacementForQueue(Integer queueId) {
+        return botQueueAssignmentRepository.findByQueue(queueId);
+    }
 
     public BotQueueAssignmentEntity storeBotQueueAssignment(BotEntity bot, QueueEntity queue) {
         BotQueueAssignmentEntity assignment = new BotQueueAssignmentEntity(bot, queue);
