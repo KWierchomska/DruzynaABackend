@@ -6,7 +6,9 @@ import ieit.agh.edu.pl.botcompetitionarena.domain.botqueueassignment.entity.BotQ
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import net.lingala.zip4j.ZipFile;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,7 +68,7 @@ public class QueueFolderCreator {
         System.out.println("WRITING CONFIG TO: " + configPath);
         ConfigFileCreator.create(
                 configPath.toString(),
-                bots.stream().map(BotEntity::getName).collect(Collectors.toList())
+                bots
         );
 
         return queueFolder.toString();
@@ -80,5 +82,14 @@ public class QueueFolderCreator {
 
     private String fileName(String name) {
         return name.replaceAll("\\W+", "_");
+    }
+
+    public void clearAll() throws IOException {
+        FileUtils.deleteDirectory(new File(basePath));
+    }
+
+    public void clearQueue(QueueEntity queue) throws IOException {
+        Path queueFolder = Paths.get(basePath, fileName(queue.getName()));
+        FileUtils.deleteDirectory(new File(queueFolder.toString()));
     }
 }
