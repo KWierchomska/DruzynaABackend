@@ -16,35 +16,39 @@ public class GubpProjectRunner {
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
         System.out.println("Here is the standard output of the command - information on bots placement:\n");
         String s;
-        String placementJson = "{id:0,progress:null,bots:[";
+        String placementJson = "{\"id\":0,\"progress\":null,\"bots\":[";
         String[] placementJsonValues;
         while ((s = stdInput.readLine()) != null) {
             placementJsonValues = s.split("\\s+");
-            if (!"{id:0,progress:null,bots:[".equals(placementJson)) {
+            if (!"{\"id\":0,\"progress\":null,\"bots\":[".equals(placementJson)) {
                 placementJson += ",";
             }
-            placementJson = placementJson + "{place:" + prepareJsonValue(placementJsonValues[0])
-                    + ",name:'" + prepareJsonValue(placementJsonValues[1]) + "'"
-                    + ",points:" + prepareJsonValue(placementJsonValues[2]) + "}";
+            placementJson = placementJson + "{\"place\":" + prepareJsonValue(placementJsonValues[0])
+                    + ",\"name\":\"" + prepareJsonValue(placementJsonValues[1]) + "\""
+                    + ",\"points\":" + prepareJsonValue(placementJsonValues[2]) + "}";
             System.out.println(s);
         }
-        placementJson += "],showClearLogsButton:true}";
+        placementJson += "],\"showClearLogsButton\":true}";
         System.out.println("Here is the standard error of the command (if any) - information on queue progress:\n");
         StringBuilder statusJsonString = new StringBuilder();
         String[] statusJsonValues;
         int statusesNo = 0;
-        StatusLogsFileCreator.clearStatusLogFile();
+        StatusLogsFileService.clearStatusLogFile();
         while ((s = stdError.readLine()) != null) {
             if (s.startsWith("Playing games:")) {
                 statusJsonValues = s.split("\\s+");
                 String progress = statusJsonValues[2].replaceAll("\\|#*", "");
-                statusJsonString.append("{id:").append(++statusesNo).append(",progress:'").append(progress).append("',bots:[],showClearLogsButton:false}");
-                StatusLogsFileCreator.appendToFile(statusJsonString.toString());
+                statusJsonString.append("{\"id\":")
+                        .append(++statusesNo)
+                        .append(",\"progress\":\"")
+                        .append(progress)
+                        .append("\",\"bots\":[],\"showClearLogsButton\":false}");
+                StatusLogsFileService.appendToFile(statusJsonString.toString());
                 statusJsonString.setLength(0);
             }
             System.out.println(s);
         }
-        StatusLogsFileCreator.appendToFile(placementJson);
+        StatusLogsFileService.appendToFile(placementJson);
     }
 
     private static String prepareJsonValue(String value) {

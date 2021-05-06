@@ -1,11 +1,15 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.StatusLogsFileService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Controller
@@ -50,4 +55,12 @@ public class QueueController {
                         "attachment; filename=\"" + queue.getName() + " Log " + ".zip\"")
                 .body(queue.getLog());
     }
+
+    @GetMapping(value = "queue/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getQueueStatus() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = mapper.readTree(StatusLogsFileService.readLastLog());
+        return ResponseEntity.ok().body(json);
+    }
+
 }
