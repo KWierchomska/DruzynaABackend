@@ -1,5 +1,7 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.control;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,9 +13,10 @@ import java.util.stream.Collectors;
 
 public class ConfigFileCreator {
 
-    public static void create(List<String> botProjectNames) {
+    public static void create(String configPath, List<BotEntity> bots) {
+        // "src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"
         try {
-            Files.deleteIfExists(Paths.get("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py"));
+            Files.deleteIfExists(Paths.get(configPath));
         } catch (NoSuchFileException e) {
             System.out.println("No such file/directory exists when searching for default_config.py file");
         } catch (IOException e) {
@@ -21,36 +24,34 @@ public class ConfigFileCreator {
         }
         System.out.println("Previous config file deletion successful");
         try {
-            File file = new File("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py");
+            File file = new File(configPath);
             if (file.createNewFile()) {
                 System.out.println("File: " + file.getName() + " created");
             } else {
                 System.out.println("File " + file.getName() + " already exist. Please remove it first.");
                 return;
             }
-            FileWriter fileWriter = new FileWriter("src\\main\\resources\\gupbapp\\GUPB\\gupb\\default_config.py");
+            FileWriter fileWriter = new FileWriter(configPath);
             fileWriter.write(
-                    botProjectNames.stream().map(projectName -> "from gupb.controller import " + projectName)
+                    bots.stream().map(bot -> "from gupb.controller import " + bot.getName())
                             .collect(Collectors.joining("\n")) +
-                    "\n\n" +
-                    "CONFIGURATION = {\n" +
-                    "    'arenas': [\n" +
-                    "        'archipelago',\n" +
-                    "        'wasteland',\n" +
-                    "        'dungeon',\n" +
-                    "        'fisher_island',\n" +
-                    "    ],\n" +
-                    "    'controllers': [\n" +
-                    "        " +
-                            String.join(".BotController(\"nazwa_bota\"),\n        ", botProjectNames)
-                            + ".BotController(\"nazwa_bota\"),\n" +
-                    "    ],\n" +
-                    "    'start_balancing': False,\n" +
-                    "    'visualise': False,\n" +
-                    "    'show_sight': None,\n" +
-                    "    'runs_no': 2,\n" +
-                    "    'profiling_metrics': [],  # possible metrics ['all', 'total', 'avg']\n" +
-                    "}\n");
+                            "\n\n" +
+                            "CONFIGURATION = {\n" +
+                            "    'arenas': [\n" +
+                            "        'archipelago',\n" +
+                            "        'wasteland',\n" +
+                            "        'dungeon',\n" +
+                            "        'fisher_island',\n" +
+                            "    ],\n" +
+                            "    'controllers': [\n" +
+                            bots.stream().map(ConfigFileCreator::botName).collect(Collectors.joining("")) +
+                            "    ],\n" +
+                            "    'start_balancing': False,\n" +
+                            "    'visualise': False,\n" +
+                            "    'show_sight': None,\n" +
+                            "    'runs_no': 2,\n" +
+                            "    'profiling_metrics': [],  # possible metrics ['all', 'total', 'avg']\n" +
+                            "}\n");
             fileWriter.close();
         } catch (IOException e) {
             System.out.println("An error when creating config file occurred");
@@ -58,4 +59,7 @@ public class ConfigFileCreator {
         }
     }
 
+    private static String botName(BotEntity bot) {
+        return "        " + bot.getName() + ".BotController(\"" + bot.getId() + "\"),\n";
+    }
 }

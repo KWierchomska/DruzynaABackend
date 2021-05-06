@@ -11,6 +11,7 @@ import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+
 @Service
 public class QueueService {
     private final QueueRepository queueRepository;
@@ -24,7 +25,7 @@ public class QueueService {
 
     public QueueEntity addQueue(String name, Long gameId, LocalDateTime deadline, MultipartFile config)
             throws IOException {
-        GameEntity game = gameService.getGame(gameId); //TODO get only id not the whole game
+        GameEntity game = gameService.getGame(gameId);
         QueueEntity queue = new QueueEntity(name, deadline, config.getBytes(), game);
         queueRepository.save(queue);
 

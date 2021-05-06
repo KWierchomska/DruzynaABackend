@@ -1,5 +1,7 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.StatusLogsFileService;
@@ -18,8 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.io.IOException;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class QueueController {
@@ -56,11 +61,19 @@ public class QueueController {
                 .body(queue.getLog());
     }
 
+    @Transactional
+    @GetMapping("/run-queue/{queue-id}")
+    public ResponseEntity<List<String>> runQueue(@PathVariable("queue-id") Long queueId) throws IOException {
+        QueueEntity queue = queueService.getQueue(queueId);
+        GameEntity game = queue.getGame();
+        return ResponseEntity.ok()
+                .body(GubpProjectRunner.run(queue, game));
+    }
+
     @GetMapping(value = "queue/status", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getQueueStatus() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(StatusLogsFileService.readLastLog());
         return ResponseEntity.ok().body(json);
     }
-
 }

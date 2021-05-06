@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @Controller
@@ -52,6 +53,17 @@ public class GameController {
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + game.getName() + ".zip\"")
                     .body(game.getPayload());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                    .body("Game with id " + id + " doesn't exist");
+        }
+    }
+
+    @GetMapping(path = "/game/{id}/summary")
+    public ResponseEntity<Object> getGameSummary(@PathVariable Long id) {
+        try {
+            GameEntity game = gameService.getGame(id);
+            return ResponseEntity.ok().body(new GameSummary(game.getId(), game.getName(), game.getVersion()));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
                     .body("Game with id " + id + " doesn't exist");
