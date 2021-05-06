@@ -16,11 +16,11 @@ public class GubpProjectRunner {
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
         System.out.println("Here is the standard output of the command - information on bots placement:\n");
         String s;
-        String placementJson = "{bots:[";
+        String placementJson = "{id:0,progress:null,bots:[";
         String[] placementJsonValues;
         while ((s = stdInput.readLine()) != null) {
             placementJsonValues = s.split("\\s+");
-            if (!"{bots:[".equals(placementJson)) {
+            if (!"{id:0,progress:null,bots:[".equals(placementJson)) {
                 placementJson += ",";
             }
             placementJson = placementJson + "{place:" + prepareJsonValue(placementJsonValues[0])
@@ -28,7 +28,7 @@ public class GubpProjectRunner {
                     + ",points:" + prepareJsonValue(placementJsonValues[2]) + "}";
             System.out.println(s);
         }
-        placementJson += "]}";
+        placementJson += "],showClearLogsButton:true}";
         System.out.println("Here is the standard error of the command (if any) - information on queue progress:\n");
         StringBuilder statusJsonString = new StringBuilder();
         String[] statusJsonValues;
@@ -38,7 +38,7 @@ public class GubpProjectRunner {
             if (s.startsWith("Playing games:")) {
                 statusJsonValues = s.split("\\s+");
                 String progress = statusJsonValues[2].replaceAll("\\|#*", "");
-                statusJsonString.append("{id:").append(++statusesNo).append(",progress:'").append(progress).append("'}");
+                statusJsonString.append("{id:").append(++statusesNo).append(",progress:'").append(progress).append("',bots:[],showClearLogsButton:false}");
                 StatusLogsFileCreator.appendToFile(statusJsonString.toString());
                 statusJsonString.setLength(0);
             }
