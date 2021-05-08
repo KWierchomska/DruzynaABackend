@@ -33,9 +33,16 @@ public class GameController {
     public ResponseEntity<Object> uploadGame(@RequestParam("name") String name,
                                              @RequestParam("version") String version,
                                              @RequestParam("description") String description,
-                                             @RequestParam("payload") MultipartFile payload) {
+                                             @RequestParam("payload") MultipartFile payload,
+                                             @RequestParam("CONTROLLER_RELATIVE_PATH") String controllerRelativePath,
+                                             @RequestParam("CONFIG_RELATIVE_PATH") String configRelativePath,
+                                             @RequestParam("GAME_RELATIVE_PATH") String gameRelativePath,
+                                             @RequestParam("RESULTS_RELATIVE_PATH") String resultRelativePath) {
         try {
-            GameEntity game = gameService.storeGame(name, version, description, payload);
+            GameEntity game = gameService.storeGame(name, version, description, payload,
+                    controllerRelativePath, configRelativePath,
+                    gameRelativePath, resultRelativePath
+            );
             System.out.println("GAME " + game.getId() + " UPLOADED");
 
             return ResponseEntity.status(HttpStatus.OK)

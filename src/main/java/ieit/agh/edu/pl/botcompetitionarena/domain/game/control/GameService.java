@@ -30,6 +30,17 @@ public class GameService {
         return game;
     }
 
+    public GameEntity storeGame(String name, String version, String description, MultipartFile payload,
+                                String controllerRelativePath, String configRelativePath,
+                                String gameRelativePath, String resultRelativePath)
+            throws IOException {
+        GameEntity game = new GameEntity(name, version, description, payload.getBytes(),
+                controllerRelativePath, configRelativePath, gameRelativePath, resultRelativePath);
+
+        gameRepository.save(game);
+        return game;
+    }
+
     public GameEntity getGame(Long id) {
         Optional<GameEntity> game = gameRepository.findById(id);
         if (game.isPresent()) return game.get();
