@@ -10,13 +10,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,5 +63,15 @@ public class QueueController {
         GameEntity game = queue.getGame();
         return ResponseEntity.ok()
                 .body(GubpProjectRunner.run(queue, game));
+    }
+
+    @GetMapping("queues/status/{id}")
+    public ResponseEntity<String> getQueueLastStatus(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(queueService.getQueue(id).getLastStatus());
+    }
+
+    @GetMapping(path = "/queues/{id}")
+    public ResponseEntity<QueueEntity> getQueue(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(queueService.getQueueWithBots(id));
     }
 }

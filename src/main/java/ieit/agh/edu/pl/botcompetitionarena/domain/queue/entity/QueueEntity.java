@@ -24,6 +24,7 @@ public class QueueEntity {
     private Long id;
     private String name;
     private LocalDateTime deadline;
+    private String lastStatus;
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
