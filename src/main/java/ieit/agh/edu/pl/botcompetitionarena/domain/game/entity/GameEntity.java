@@ -22,6 +22,11 @@ public class GameEntity {
     private String version;
     private String description;
 
+    private String controllerRelativePath;
+    private String configRelativePath;
+    private String gameRelativePath;
+    private String resultRelativePath;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] payload;
@@ -38,5 +43,18 @@ public class GameEntity {
         this.version = version;
         this.description = description;
         this.payload = payload;
+    }
+
+    public GameEntity(String name, String version, String description, byte[] payload,
+                      String controllerRelativePath, String configRelativePath,
+                      String gameRelativePath, String resultRelativePath) {
+        this.name = name;
+        this.version = version;
+        this.description = description;
+        this.payload = payload;
+        this.controllerRelativePath = controllerRelativePath;
+        this.configRelativePath = configRelativePath;
+        this.gameRelativePath = gameRelativePath;
+        this.resultRelativePath = resultRelativePath;
     }
 }

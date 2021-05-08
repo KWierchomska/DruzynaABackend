@@ -22,18 +22,13 @@ public class GubpProjectRunner {
 
     private static QueueRepository repository;
 
-    @Autowired
     private QueueRepository queueRepository;
+    @Autowired
 
     @PostConstruct
     public void init() {
         this.repository = queueRepository;
     }
-
-    private final static String CONTROLLER_RELATIVE_PATH = "GUPB-master/gupb/controller"; //TODO
-    private final static String CONFIG_RELATIVE_PATH = "GUPB-master/gupb/default_config.py"; //TODO
-    private final static String GAME_RELATIVE_PATH = "GUPB-master/"; //TODO
-    private final static String RESULTS_RELATIVE_PATH = "GUPB-master/results";
     private static String queuePath;
 
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
@@ -41,10 +36,10 @@ public class GubpProjectRunner {
         // TODO: changed hardcoded variables
         //String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python";
 
-        QueueFolderCreator creator = new QueueFolderCreator(CONTROLLER_RELATIVE_PATH, CONFIG_RELATIVE_PATH);
+        QueueFolderCreator creator = new QueueFolderCreator(game.getControllerRelativePath(), game.getConfigRelativePath());
         queuePath = creator.createFor(queue, game);
 
-        Path folder = Paths.get(queuePath, GAME_RELATIVE_PATH);
+        Path folder = Paths.get(queuePath, game.getGameRelativePath());
         System.out.println(folder);
         File workingFolder = new File(folder.toString());
 
@@ -98,8 +93,8 @@ public class GubpProjectRunner {
         return results;
     }
 
-    private static void setQueueLogs(QueueEntity queue) {
-        File resultsDir = new File(String.valueOf(Paths.get(queuePath, RESULTS_RELATIVE_PATH)));
+    private static void setQueueLogs(QueueEntity queue, String resultRelativePath) {
+        File resultsDir = new File(String.valueOf(Paths.get(queuePath, resultRelativePath)));
         Optional<File> result = Arrays.stream(Objects.requireNonNull(resultsDir.listFiles(File::isFile)))
                 .max(Comparator.comparingLong(File::lastModified));
         result.ifPresent(file -> {
