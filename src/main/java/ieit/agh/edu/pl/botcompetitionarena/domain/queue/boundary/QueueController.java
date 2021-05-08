@@ -71,6 +71,7 @@ public class QueueController {
     }
 
     @GetMapping(path = "/queues/{id}")
+    @Transactional
     public ResponseEntity<QueueEntity> getQueue(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(queueService.getQueueWithBots(id));
     }
