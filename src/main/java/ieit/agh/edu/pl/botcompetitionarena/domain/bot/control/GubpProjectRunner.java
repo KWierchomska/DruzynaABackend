@@ -2,17 +2,33 @@ package ieit.agh.edu.pl.botcompetitionarena.domain.bot.control;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueFolderCreator;
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueRepository;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.zeroturnaround.zip.ZipUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-
+@Component
 public class GubpProjectRunner {
+
+    private static QueueRepository repository;
+
+    @Autowired
+    private QueueRepository queueRepository;
+
+    @PostConstruct
+    public void init() {
+        this.repository = queueRepository;
+    }
 
     private final static String CONTROLLER_RELATIVE_PATH = "GUPB-master/gupb/controller"; //TODO
     private final static String CONFIG_RELATIVE_PATH = "GUPB-master/gupb/default_config.py"; //TODO
@@ -21,6 +37,7 @@ public class GubpProjectRunner {
     private static String queuePath;
 
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         // TODO: changed hardcoded variables
         //String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python";
 
@@ -50,13 +67,31 @@ public class GubpProjectRunner {
         BufferedReader stdError = new BufferedReader(new InputStreamReader(gupbProcess.getErrorStream()));
         System.out.println("Here is the standard error of the command (if any) - information about queue progress:\n");
         List<String> results = new ArrayList<>();
-        while ((logs = stdError.readLine()) != null)
+        while ((logs = stdError.readLine()) != null) {
             System.out.println(logs);
+            String finalLogs = logs;
+            Runnable task = () -> {
+                queue.setLastStatus(finalLogs);
+                repository.saveAndFlush(queue);
+            };
+            executorService.execute(task);
+        }
         System.out.println("Here is the standard output of the command - information about bots placement:\n");
         while ((logs = stdInput.readLine()) != null) {
-            System.out.println(logs);
-            results.add(logs);
+            String[] splittedLogs = logs.split("\\s+");
+            String botId = splittedLogs[1].replace(":", "");
+            String botPlacement = splittedLogs[0].replace(".", "");
+            String finalLogs = logs;
+            queue.getBots().forEach(botQueueAssignmentEntity -> {
+                if (botQueueAssignmentEntity.getBot().getId().equals(Long.parseLong(botId))) {
+                    results.add(finalLogs.replace(botId + ":", botQueueAssignmentEntity.getBot().getName() + ":"));
+                    botQueueAssignmentEntity.setPlace(Integer.parseInt(botPlacement));
+                }
+            });
         }
+        System.out.println(results.toString());
+
+        queue.setLastStatus(results.toString());
 
         setQueueLogs(queue);
 
