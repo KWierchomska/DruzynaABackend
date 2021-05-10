@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 public class GubpProjectRunner {
@@ -35,6 +37,7 @@ public class GubpProjectRunner {
     private static String queuePath;
 
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         // TODO: changed hardcoded variables
         //String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python";
 
@@ -71,13 +74,22 @@ public class GubpProjectRunner {
                 queue.setLastStatus(finalLogs);
                 repository.saveAndFlush(queue);
             };
-            new Thread(task).start();
+            executorService.execute(task);
         }
         System.out.println("Here is the standard output of the command - information about bots placement:\n");
         while ((logs = stdInput.readLine()) != null) {
-            System.out.println(logs);
-            results.add(logs);
+            String[] splittedLogs = logs.split("\\s+");
+            String botId = splittedLogs[1].replace(":", "");
+            String botPlacement = splittedLogs[0].replace(".", "");
+            String finalLogs = logs;
+            queue.getBots().forEach(botQueueAssignmentEntity -> {
+                if (botQueueAssignmentEntity.getBot().getId().equals(Long.parseLong(botId))) {
+                    results.add(finalLogs.replace(botId + ":", botQueueAssignmentEntity.getBot().getName() + ":"));
+                    botQueueAssignmentEntity.setPlace(Integer.parseInt(botPlacement));
+                }
+            });
         }
+        System.out.println(results.toString());
 
         queue.setLastStatus(results.toString());
 
