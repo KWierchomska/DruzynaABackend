@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 import org.zeroturnaround.zip.ZipUtil;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,30 +24,19 @@ import java.util.concurrent.Executors;
 public class GubpProjectRunner {
 
     private static QueueRepository repository;
-
-    @Autowired
-    private QueueRepository queueRepository;
-
-    @PostConstruct
-    public void init() {
-        this.repository = queueRepository;
-    }
-
-    private final static String CONTROLLER_RELATIVE_PATH = "GUPB-master/gupb/controller"; //TODO
-    private final static String CONFIG_RELATIVE_PATH = "GUPB-master/gupb/default_config.py"; //TODO
-    private final static String GAME_RELATIVE_PATH = "GUPB-master/"; //TODO
-    private final static String RESULTS_RELATIVE_PATH = "GUPB-master/results";
     private static String queuePath;
+    private QueueRepository queueRepository;
 
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         // TODO: changed hardcoded variables
         //String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python";
 
-        QueueFolderCreator creator = new QueueFolderCreator(CONTROLLER_RELATIVE_PATH, CONFIG_RELATIVE_PATH);
+        QueueFolderCreator creator = new QueueFolderCreator(game.getControllerRelativePath(),
+                game.getConfigRelativePath());
         queuePath = creator.createFor(queue, game);
 
-        Path folder = Paths.get(queuePath, GAME_RELATIVE_PATH);
+        Path folder = Paths.get(queuePath, game.getGameRelativePath());
         System.out.println(folder);
         File workingFolder = new File(folder.toString());
 
@@ -84,22 +76,23 @@ public class GubpProjectRunner {
             String finalLogs = logs;
             queue.getBots().forEach(botQueueAssignmentEntity -> {
                 if (botQueueAssignmentEntity.getBot().getId().equals(Long.parseLong(botId))) {
-                    results.add(finalLogs.replace(botId + ":", botQueueAssignmentEntity.getBot().getName() + ":"));
+                    results.add(finalLogs.replace(botId + ":",
+                            botQueueAssignmentEntity.getBot().getName() + ":"));
                     botQueueAssignmentEntity.setPlace(Integer.parseInt(botPlacement));
                 }
             });
         }
-        System.out.println(results.toString());
+        System.out.println(results);
 
         queue.setLastStatus(results.toString());
 
-        setQueueLogs(queue);
+        setQueueLogs(queue, game.getResultRelativePath());
 
         return results;
     }
 
-    private static void setQueueLogs(QueueEntity queue) {
-        File resultsDir = new File(String.valueOf(Paths.get(queuePath, RESULTS_RELATIVE_PATH)));
+    private static void setQueueLogs(QueueEntity queue, String resultRelativePath) {
+        File resultsDir = new File(String.valueOf(Paths.get(queuePath, resultRelativePath)));
         Optional<File> result = Arrays.stream(Objects.requireNonNull(resultsDir.listFiles(File::isFile)))
                 .max(Comparator.comparingLong(File::lastModified));
         result.ifPresent(file -> {
@@ -112,6 +105,13 @@ public class GubpProjectRunner {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Autowired
+
+    @PostConstruct
+    public void init() {
+        repository = queueRepository;
     }
 
 }
