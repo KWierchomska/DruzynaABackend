@@ -15,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class BotQueueAssignmentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer place;
 
