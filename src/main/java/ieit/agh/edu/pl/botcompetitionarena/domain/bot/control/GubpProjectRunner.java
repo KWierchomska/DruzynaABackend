@@ -24,13 +24,19 @@ import java.util.concurrent.Executors;
 public class GubpProjectRunner {
 
     private static QueueRepository repository;
-    private static String queuePath;
+
+    @Autowired
     private QueueRepository queueRepository;
+
+    @PostConstruct
+    public void init() {
+        this.repository = queueRepository;
+    }
+
+    private static String queuePath;
 
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        // TODO: changed hardcoded variables
-        //String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python";
 
         QueueFolderCreator creator = new QueueFolderCreator(game.getControllerRelativePath(),
                 game.getConfigRelativePath());
@@ -105,13 +111,6 @@ public class GubpProjectRunner {
                 e.printStackTrace();
             }
         });
-    }
-
-    @Autowired
-
-    @PostConstruct
-    public void init() {
-        repository = queueRepository;
     }
 
 }
