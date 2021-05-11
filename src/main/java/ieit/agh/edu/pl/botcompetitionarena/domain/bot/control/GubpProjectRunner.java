@@ -32,7 +32,8 @@ public class GubpProjectRunner {
         // TODO: changed hardcoded variables
         //String envPath = "C:\\Users\\kwier\\Desktop\\studia\\Semestr VI\\GUPB\\venv\\Scripts\\python";
 
-        QueueFolderCreator creator = new QueueFolderCreator(game.getControllerRelativePath(), game.getConfigRelativePath());
+        QueueFolderCreator creator = new QueueFolderCreator(game.getControllerRelativePath(),
+                game.getConfigRelativePath());
         queuePath = creator.createFor(queue, game);
 
         Path folder = Paths.get(queuePath, game.getGameRelativePath());
