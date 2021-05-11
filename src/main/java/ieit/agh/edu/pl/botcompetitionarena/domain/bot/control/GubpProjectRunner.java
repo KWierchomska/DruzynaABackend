@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 import org.zeroturnaround.zip.ZipUtil;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,15 +24,8 @@ import java.util.concurrent.Executors;
 public class GubpProjectRunner {
 
     private static QueueRepository repository;
-
-    private QueueRepository queueRepository;
-    @Autowired
-
-    @PostConstruct
-    public void init() {
-        this.repository = queueRepository;
-    }
     private static String queuePath;
+    private QueueRepository queueRepository;
 
     public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -79,16 +75,17 @@ public class GubpProjectRunner {
             String finalLogs = logs;
             queue.getBots().forEach(botQueueAssignmentEntity -> {
                 if (botQueueAssignmentEntity.getBot().getId().equals(Long.parseLong(botId))) {
-                    results.add(finalLogs.replace(botId + ":", botQueueAssignmentEntity.getBot().getName() + ":"));
+                    results.add(finalLogs.replace(botId + ":",
+                            botQueueAssignmentEntity.getBot().getName() + ":"));
                     botQueueAssignmentEntity.setPlace(Integer.parseInt(botPlacement));
                 }
             });
         }
-        System.out.println(results.toString());
+        System.out.println(results);
 
         queue.setLastStatus(results.toString());
 
-        setQueueLogs(queue);
+        setQueueLogs(queue, game.getResultRelativePath());
 
         return results;
     }
@@ -107,6 +104,13 @@ public class GubpProjectRunner {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Autowired
+
+    @PostConstruct
+    public void init() {
+        repository = queueRepository;
     }
 
 }

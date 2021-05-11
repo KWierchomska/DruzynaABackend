@@ -66,7 +66,8 @@ public class QueueFolderCreator {
         // write config
         Path configPath = Paths.get(queueFolder.toString(), configRelativePath);
         System.out.println("WRITING CONFIG TO: " + configPath);
-        ConfigFileCreator.create(
+        ConfigFileCreator.createReal(
+                queue,
                 configPath.toString(),
                 bots
         );
