@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class ConfigFileCreator {
         }
     }
 
-    public static void createReal(QueueEntity queue, String configPath, List<BotEntity> bots) {
+    public static void createReal(QueueEntity queue, String configPath, String importPath, List<BotEntity> bots) {
         try {
             Files.deleteIfExists(Paths.get(configPath));
         } catch (NoSuchFileException e) {
@@ -76,7 +77,8 @@ public class ConfigFileCreator {
          */
 
         String config = new String(queue.getConfig());
-        config = bots.stream().map(bot -> "from gupb.controller import " + bot.getName())
+        String importStr = importPath.replace('/', '.');
+        config = bots.stream().map(bot -> "from "+ importStr +" import " + bot.getName())
                 .collect(Collectors.joining("\n")) +
                 "\n" +
                 config.replace("#BOTS#", bots.stream().map(ConfigFileCreator::botNameWithoutIndent)

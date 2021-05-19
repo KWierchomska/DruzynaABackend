@@ -26,6 +26,7 @@ public class GameEntity {
     private String configRelativePath;
     private String gameRelativePath;
     private String resultRelativePath;
+    private String runCommand;
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
@@ -47,7 +48,7 @@ public class GameEntity {
 
     public GameEntity(String name, String version, String description, byte[] payload,
                       String controllerRelativePath, String configRelativePath,
-                      String gameRelativePath, String resultRelativePath) {
+                      String gameRelativePath, String resultRelativePath, String runCommand) {
         this.name = name;
         this.version = version;
         this.description = description;

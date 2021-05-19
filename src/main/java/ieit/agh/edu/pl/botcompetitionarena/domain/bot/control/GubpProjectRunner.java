@@ -58,7 +58,7 @@ public class GubpProjectRunner {
             System.out.println(logs);
         }
 
-        ProcessBuilder gupbProcessBuilder = new ProcessBuilder("python", "-m", "gupb");
+        ProcessBuilder gupbProcessBuilder = new ProcessBuilder(game.getRunCommand().split(" "));
         gupbProcessBuilder.directory(workingFolder);
         Process gupbProcess = gupbProcessBuilder.start();
         stdInput = new BufferedReader(new InputStreamReader(gupbProcess.getInputStream()));

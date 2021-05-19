@@ -65,10 +65,12 @@ public class QueueFolderCreator {
 
         // write config
         Path configPath = Paths.get(queueFolder.toString(), configRelativePath);
+        Path importPath = Paths.get(game.getGameRelativePath()).relativize(Paths.get(game.getControllerRelativePath()));
         System.out.println("WRITING CONFIG TO: " + configPath);
         ConfigFileCreator.createReal(
                 queue,
                 configPath.toString(),
+                importPath.toString(),
                 bots
         );
 
