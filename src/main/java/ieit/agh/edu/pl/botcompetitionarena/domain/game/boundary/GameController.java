@@ -37,11 +37,12 @@ public class GameController {
                                              @RequestParam("CONTROLLER_RELATIVE_PATH") String controllerRelativePath,
                                              @RequestParam("CONFIG_RELATIVE_PATH") String configRelativePath,
                                              @RequestParam("GAME_RELATIVE_PATH") String gameRelativePath,
-                                             @RequestParam("RESULTS_RELATIVE_PATH") String resultRelativePath) {
+                                             @RequestParam("RESULTS_RELATIVE_PATH") String resultRelativePath,
+                                             @RequestParam("RUN_COMMAND") String runCommand) {
         try {
             GameEntity game = gameService.storeGame(name, version, description, payload,
                     controllerRelativePath, configRelativePath,
-                    gameRelativePath, resultRelativePath
+                    gameRelativePath, resultRelativePath, runCommand
             );
             System.out.println("GAME " + game.getId() + " UPLOADED");
 

@@ -32,10 +32,10 @@ public class GameService {
 
     public GameEntity storeGame(String name, String version, String description, MultipartFile payload,
                                 String controllerRelativePath, String configRelativePath,
-                                String gameRelativePath, String resultRelativePath)
+                                String gameRelativePath, String resultRelativePath, String runCommand)
             throws IOException {
         GameEntity game = new GameEntity(name, version, description, payload.getBytes(),
-                controllerRelativePath, configRelativePath, gameRelativePath, resultRelativePath);
+                controllerRelativePath, configRelativePath, gameRelativePath, resultRelativePath, runCommand);
 
         gameRepository.save(game);
         return game;
