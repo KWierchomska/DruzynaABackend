@@ -1,5 +1,6 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.control;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.exception.InvalidBotException;
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueFolderCreator;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueRepository;
@@ -19,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Component
 public class GubpProjectRunner {
@@ -35,7 +37,7 @@ public class GubpProjectRunner {
 
     private static String queuePath;
 
-    public static List<String> run(QueueEntity queue, GameEntity game) throws IOException {
+    public static List<String> run(QueueEntity queue, GameEntity game) throws IOException, InvalidBotException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
         QueueFolderCreator creator = new QueueFolderCreator(game.getControllerRelativePath(),
@@ -68,6 +70,11 @@ public class GubpProjectRunner {
         while ((logs = stdError.readLine()) != null) {
             System.out.println(logs);
             String finalLogs = logs;
+            if(logs.contains("Traceback")){
+                gupbProcess.destroy();
+                System.out.println("There has been problem with your bot: ");
+                throw new InvalidBotException(stdError.lines().collect(Collectors.toList()));
+            }
             Runnable task = () -> {
                 queue.setLastStatus(finalLogs);
                 repository.saveAndFlush(queue);

@@ -1,6 +1,7 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.exception.InvalidBotException;
 import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
@@ -58,7 +59,7 @@ public class QueueController {
 
     @Transactional
     @GetMapping("/run-queue/{queue-id}")
-    public ResponseEntity<List<String>> runQueue(@PathVariable("queue-id") Long queueId) throws IOException {
+    public ResponseEntity<List<String>> runQueue(@PathVariable("queue-id") Long queueId) throws IOException, InvalidBotException {
         QueueEntity queue = queueService.getQueue(queueId);
         GameEntity game = queue.getGame();
         return ResponseEntity.ok()
