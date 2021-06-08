@@ -57,5 +57,6 @@ public class GameEntity {
         this.configRelativePath = configRelativePath;
         this.gameRelativePath = gameRelativePath;
         this.resultRelativePath = resultRelativePath;
+        this.runCommand = runCommand;
     }
 }
