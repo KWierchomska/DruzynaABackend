@@ -1,5 +1,6 @@
 package ieit.agh.edu.pl.botcompetitionarena;
 
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.exception.InvalidBotException;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.boundary.QueueController;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueRepository;
 import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
@@ -29,8 +30,12 @@ public class RunQueues {
         for (QueueEntity queue: queueList) {
             if (queue.getLastStatus() == null) {
                 LocalDate queueDate = LocalDate.of(queue.getDeadline().getYear(), queue.getDeadline().getMonth(), queue.getDeadline().getDayOfMonth());
-                if (queueDate.isBefore(date)) {
-                    queueController.runQueue(queue.getId());
+                if (queueDate.isBefore(date)) { 
+                    try {
+                        queueController.runQueue(queue.getId());
+                    } catch (InvalidBotException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
