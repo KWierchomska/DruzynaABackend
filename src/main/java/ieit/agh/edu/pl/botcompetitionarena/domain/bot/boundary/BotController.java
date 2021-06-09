@@ -1,8 +1,14 @@
 package ieit.agh.edu.pl.botcompetitionarena.domain.bot.boundary;
 
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.BotService;
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.control.GubpProjectRunner;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotEntity;
 import ieit.agh.edu.pl.botcompetitionarena.domain.bot.entity.BotSummary;
+import ieit.agh.edu.pl.botcompetitionarena.domain.bot.exception.InvalidBotException;
+import ieit.agh.edu.pl.botcompetitionarena.domain.game.entity.GameEntity;
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.control.QueueService;
+import ieit.agh.edu.pl.botcompetitionarena.domain.queue.entity.QueueEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,22 +21,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 @Controller
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BotController {
     private final BotService botService;
-
-    @Autowired
-    public BotController(BotService botService) {
-        this.botService = botService;
-    }
+    private final QueueService queueService;
 
     @PostMapping("/upload-bot")
     public ResponseEntity<Object> uploadBot(@RequestParam("name") String name,
-                                             @RequestParam("version") String version,
-                                             @RequestParam("queue") Long queueId,
-                                             @RequestParam("payload") MultipartFile payload) {
+                                            @RequestParam("version") String version,
+                                            @RequestParam("queue") Long queueId,
+                                            @RequestParam("payload") MultipartFile payload) {
         try {
             BotEntity bot = botService.storeBot(name, version, queueId, payload);
             System.out.println("BOT " + bot.getId() + " UPLOADED");
@@ -40,6 +44,25 @@ public class BotController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Failed to upload bot");
         }
+    }
+
+    @Transactional
+    @PostMapping("/bot-test")
+    public ResponseEntity<Object> testBot(@RequestParam("botId") Long botId,
+                                            @RequestParam("queueId") Long queueId) throws IOException {
+
+            QueueEntity queue = queueService.getQueue(queueId);
+            GameEntity game = queue.getGame();
+            try{
+                GubpProjectRunner.run(queue, game);
+            }
+            catch (InvalidBotException ex){
+                botService.deleteBot(botId);
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                        .body(ex.getMessages());
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body("Everything is ok with your bot.");
     }
 
     @GetMapping(path = "/bot/{id}", produces = "application/hal+json;charset=utf8")
@@ -59,7 +82,7 @@ public class BotController {
     @Transactional
     @PostMapping("/set-content/{id}")
     public ResponseEntity<Object> setBot(@PathVariable("id") Long botId,
-                                            @RequestParam("payload") MultipartFile payload) {
+                                         @RequestParam("payload") MultipartFile payload) {
         try {
             BotEntity bot = botService.getBot(botId);
             bot.setPayload(payload.getBytes());

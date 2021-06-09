@@ -47,4 +47,8 @@ public class BotService {
         return botRepository.getBotEntitiesById(queueId);
     }
 
+    public void deleteBot(Long id){
+        botRepository.deleteById(id);
+    }
+
 }
