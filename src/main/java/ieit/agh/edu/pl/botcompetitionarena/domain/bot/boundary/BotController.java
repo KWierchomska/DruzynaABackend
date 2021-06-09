@@ -47,7 +47,7 @@ public class BotController {
     }
 
     @Transactional
-    @GetMapping("/bot-test")
+    @PostMapping("/bot-test")
     public ResponseEntity<Object> testBot(@RequestParam("botId") Long botId,
                                             @RequestParam("queueId") Long queueId) throws IOException {
 
